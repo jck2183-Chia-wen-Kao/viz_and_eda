@@ -189,4 +189,6 @@ weather_df %>%
     temp_change_sd = sd(temp_change, na.rm = TRUE)
   )
 ```
+## Quick Note
+summarize only gets you so far.
 
