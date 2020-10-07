@@ -38,3 +38,34 @@ weather_df %>%
   group_by(name, month) 
 ```
 
+## Counting things
+
+count months/names observations.
+```{r}
+weather_df %>% 
+  group_by(month) %>% 
+  summarise(n_obs = n())
+
+weather_df %>% 
+  group_by(name) %>% 
+  summarise(n_obs = n())
+
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(n_obs = n())
+```
+we can use `count()`
+
+```{r}
+weather_df %>% 
+  count(name, month, name = "n_obs")
+```
+**NEVER** use base R's 'table'.
+1. output is not a data frame.
+2.take one variable and make them into table is a bad idea.
+```{r, eval=FALSE}
+weather_df %>% 
+  pull(month) %>% 
+  table()
+```
+
