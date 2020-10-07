@@ -268,3 +268,109 @@ weather_df %>%
     ##            name cold not cold
     ##  CentralPark_NY   44      321
     ##    Waterhole_WA  172      193
+
+## General Summaries
+
+You can do lots of summaries.
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prcp = mean(prcp, na.rm = TRUE), 
+    median_tmin = median(tmin, na.rm = TRUE)
+  )
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 36 x 5
+    ## # Groups:   name [3]
+    ##    name           month      mean_tmax mean_prcp median_tmin
+    ##    <chr>          <date>         <dbl>     <dbl>       <dbl>
+    ##  1 CentralPark_NY 2017-01-01      5.98      39.5         1.7
+    ##  2 CentralPark_NY 2017-02-01      9.28      22.5         1.4
+    ##  3 CentralPark_NY 2017-03-01      8.22      43.0         1.1
+    ##  4 CentralPark_NY 2017-04-01     18.3       32.5         8.9
+    ##  5 CentralPark_NY 2017-05-01     20.1       52.3        11.7
+    ##  6 CentralPark_NY 2017-06-01     26.3       40.4        18.9
+    ##  7 CentralPark_NY 2017-07-01     28.7       34.3        21.1
+    ##  8 CentralPark_NY 2017-08-01     27.2       27.4        20  
+    ##  9 CentralPark_NY 2017-09-01     25.4       17.0        18.4
+    ## 10 CentralPark_NY 2017-10-01     21.8       34.3        13.9
+    ## # … with 26 more rows
+
+This is a data frame, so we can make a plot.
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prcp = mean(prcp, na.rm = TRUE), 
+    median_tmin = median(tmin, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = month, y = mean_tmax, color = name)) +
+  geom_point() +
+  geom_line()
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+![](eda_files/figure-gfm/unnamed-chunk-10-1.png)<!-- --> **Suppose you
+want to summarize many columns.**
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(across(prcp:tmin, mean))
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 36 x 5
+    ## # Groups:   name [3]
+    ##    name           month       prcp  tmax   tmin
+    ##    <chr>          <date>     <dbl> <dbl>  <dbl>
+    ##  1 CentralPark_NY 2017-01-01  39.5  5.98  0.748
+    ##  2 CentralPark_NY 2017-02-01  22.5  9.28  1.45 
+    ##  3 CentralPark_NY 2017-03-01  43.0  8.22 -0.177
+    ##  4 CentralPark_NY 2017-04-01  32.5 18.3   9.66 
+    ##  5 CentralPark_NY 2017-05-01  52.3 20.1  12.2  
+    ##  6 CentralPark_NY 2017-06-01  40.4 26.3  18.2  
+    ##  7 CentralPark_NY 2017-07-01  34.3 28.7  21.0  
+    ##  8 CentralPark_NY 2017-08-01  27.4 27.2  19.5  
+    ##  9 CentralPark_NY 2017-09-01  17.0 25.4  17.4  
+    ## 10 CentralPark_NY 2017-10-01  34.3 21.8  13.9  
+    ## # … with 26 more rows
+
+Reminder : sometimes your results are easier to read in another format.
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name,
+    values_from = mean_tmax
+  ) %>% 
+  knitr::kable(digits = 3)
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+| month      | CentralPark\_NY | Waikiki\_HA | Waterhole\_WA |
+| :--------- | --------------: | ----------: | ------------: |
+| 2017-01-01 |           5.977 |      27.758 |       \-1.400 |
+| 2017-02-01 |           9.282 |      27.218 |       \-0.018 |
+| 2017-03-01 |           8.223 |      29.077 |         1.674 |
+| 2017-04-01 |          18.273 |      29.713 |         3.873 |
+| 2017-05-01 |          20.090 |          NA |        10.097 |
+| 2017-06-01 |          26.263 |      31.310 |        12.873 |
+| 2017-07-01 |          28.739 |          NA |        16.326 |
+| 2017-08-01 |          27.194 |      32.016 |        19.645 |
+| 2017-09-01 |          25.433 |      31.743 |        14.160 |
+| 2017-10-01 |          21.787 |      30.287 |         8.313 |
+| 2017-11-01 |          12.290 |      28.383 |         1.380 |
+| 2017-12-01 |           4.474 |      26.461 |         2.213 |
