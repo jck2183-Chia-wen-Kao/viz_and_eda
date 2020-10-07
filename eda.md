@@ -225,3 +225,46 @@ weather_df %>%
     ## 10 2017-10-01    93     31
     ## 11 2017-11-01    90     30
     ## 12 2017-12-01    93     31
+
+## A digression on 2x2 tables
+
+``` r
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold", 
+      tmax >= 5 ~ "not cold", 
+      TRUE      ~ ""
+    )
+  ) %>% 
+  group_by(cold) %>% 
+  summarise(count = n())
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 2 x 2
+    ##   cold     count
+    ##   <chr>    <int>
+    ## 1 cold       216
+    ## 2 not cold   514
+
+janitor tabyl
+
+``` r
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold", 
+      tmax >= 5 ~ "not cold", 
+      TRUE      ~ ""
+    )
+  ) %>% 
+  janitor::tabyl(name, cold)
+```
+
+    ##            name cold not cold
+    ##  CentralPark_NY   44      321
+    ##    Waterhole_WA  172      193
